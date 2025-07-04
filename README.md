@@ -103,6 +103,32 @@ Run the following command from the [project root](./) directory:
 uv run python -m quant_trading_strategy_backtester.app
 ```
 
+### Database Setup
+
+Database results are stored in a local `strategies.db` SQLite file. Schema
+changes are handled with [Alembic](https://alembic.sqlalchemy.org/).
+
+1. Initialise or upgrade the database schema:
+
+   ```bash
+   alembic upgrade head
+   ```
+
+2. To clear all tables for a clean state:
+
+   ```bash
+   uv run python -m quant_trading_strategy_backtester.utils
+   ```
+
+3. (Optional) seed the database with example data:
+
+   ```bash
+   uv run python scripts/seed_database.py
+   ```
+
+Tests use an in-memory database automatically, so no additional setup is
+required.
+
 ### Running Tests
 
 After installing the dependencies you can run the unit tests with

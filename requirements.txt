@@ -113,6 +113,8 @@ soupsieve==2.7
     # via beautifulsoup4
 sqlalchemy==2.0.41
     # via quant-trading-strategy-backtester (pyproject.toml)
+alembic==1.16.2
+    # via quant-trading-strategy-backtester (pyproject.toml)
 streamlit==1.46.1
     # via quant-trading-strategy-backtester (pyproject.toml)
 tenacity==9.1.2
