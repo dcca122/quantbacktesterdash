@@ -18,7 +18,7 @@ Thank you for taking the time to contribute to this project!
    ```bash
    pip install -r requirements.txt
    pip install -e .
-   ```
+ ```
 
 ## Running Tests
 
@@ -37,3 +37,21 @@ This will run all unit tests and display verbose output.
   `quant_trading_strategy_backtester`.
 * **Missing Dependencies**: Re-run `uv sync --all-extras --dev` or
   `pip install -r requirements.txt` if imports fail.
+
+## Running the Application
+
+Launch the Streamlit dashboard from the project root with:
+
+```bash
+uv run python -m quant_trading_strategy_backtester.app
+```
+
+## Formatting, Linting and Type Checking
+
+Use the provided `Makefile` targets before submitting a pull request:
+
+```bash
+make fmt       # apply Black and Ruff fixes
+make lint      # run Ruff lint checks
+make typecheck # run mypy type checks
+```
