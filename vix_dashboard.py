@@ -58,7 +58,7 @@ tool_type = st.sidebar.selectbox(
     [
         "Buy and Hold",
         "Mean Reversion",
-        "Moving Average Crossover",
+        "Triple EMA Crossover (TEMO)",
         "Pairs Trading",
         "VIX Calculator",
         "Black-Scholes Option Pricing",
@@ -165,15 +165,15 @@ elif tool_type == "Mean Reversion":
         except Exception as e:
             st.error(f"Error: {e}")
 
-elif tool_type == "Moving Average Crossover":
-    st.header("Moving Average Crossover Results")
+elif tool_type == "Triple EMA Crossover (TEMO)":
+    st.header("Triple EMA Crossover (TEMO) Results")
     short_window = st.number_input(
         "Short MA Window", min_value=2, max_value=100, value=20, step=1
     )
     long_window = st.number_input(
         "Long MA Window", min_value=10, max_value=200, value=50, step=1
     )
-    if st.button("Run Moving Average Crossover"):
+    if st.button("Run Triple EMA Crossover"):
         try:
             data = yf.download(
                 ticker, start=str(start_date), end=str(end_date), auto_adjust=True
@@ -193,7 +193,11 @@ elif tool_type == "Moving Average Crossover":
             data["Cumulative"] = (1 + data["Returns"].fillna(0)).cumprod()
             metrics = compute_metrics(data["Returns"])
             display_performance_summary(
-                ticker, "Moving Average Crossover", start_date, end_date, metrics
+                ticker,
+                "Triple EMA Crossover (TEMO)",
+                start_date,
+                end_date,
+                metrics,
             )
             st.line_chart(data["Cumulative"])
             with st.expander("Show Historical Data"):

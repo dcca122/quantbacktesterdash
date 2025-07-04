@@ -49,8 +49,14 @@ class MovingAverageCrossoverStrategy(BaseStrategy):
 
         up_move = pl.col("High") - pl.col("High").shift(1)
         down_move = pl.col("Low").shift(1) - pl.col("Low")
-        plus_dm = pl.when((up_move > down_move) & (up_move > 0)).then(up_move).otherwise(0)
-        minus_dm = pl.when((down_move > up_move) & (down_move > 0)).then(down_move).otherwise(0)
+        plus_dm = (
+            pl.when((up_move > down_move) & (up_move > 0)).then(up_move).otherwise(0)
+        )
+        minus_dm = (
+            pl.when((down_move > up_move) & (down_move > 0))
+            .then(down_move)
+            .otherwise(0)
+        )
         df = df.with_columns([plus_dm.alias("plus_dm"), minus_dm.alias("minus_dm")])
         df = df.with_columns(
             [
@@ -66,7 +72,10 @@ class MovingAverageCrossoverStrategy(BaseStrategy):
         )
         df = df.with_columns(
             (
-                ((pl.col("plus_di") - pl.col("minus_di")).abs() / (pl.col("plus_di") + pl.col("minus_di")))
+                (
+                    (pl.col("plus_di") - pl.col("minus_di")).abs()
+                    / (pl.col("plus_di") + pl.col("minus_di"))
+                )
                 * 100
             ).alias("dx")
         )

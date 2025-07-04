@@ -14,7 +14,7 @@ import polars as pl
 TRADING_STRATEGIES = [
     "Buy and Hold",
     "Mean Reversion",
-    "Moving Average Crossover",
+    "Triple EMA Crossover (TEMO)",
     "Pairs Trading",
 ]
 

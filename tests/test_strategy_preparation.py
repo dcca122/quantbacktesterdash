@@ -18,7 +18,7 @@ from quant_trading_strategy_backtester.strategy_preparation import (
 @pytest.mark.parametrize(
     "strategy_type,params,tickers",
     [
-        ("Moving Average Crossover", {}, "AAPL"),
+        ("Triple EMA Crossover (TEMO)", {}, "AAPL"),
         ("Mean Reversion", {"window": 5, "std_dev": 2.0}, "AAPL"),
         (
             "Pairs Trading",
@@ -83,7 +83,7 @@ def test_optimise_single_ticker_strategy_ticker(monkeypatch):
 
     def mock_run_backtest(*args, **kwargs):
         strategy_type = args[1]
-        if strategy_type == "Moving Average Crossover":
+        if strategy_type == "Triple EMA Crossover (TEMO)":
             return None, {"Sharpe Ratio": 1.5}
         elif strategy_type == "Mean Reversion":
             return None, {"Sharpe Ratio": 1.2}
@@ -101,7 +101,7 @@ def test_optimise_single_ticker_strategy_ticker(monkeypatch):
 
     start_date = datetime.date(2020, 1, 1)
     end_date = datetime.date(2020, 12, 31)
-    strategy_type = "Moving Average Crossover"
+    strategy_type = "Triple EMA Crossover (TEMO)"
     strategy_params = {}
 
     best_ticker = optimise_single_ticker_strategy_ticker(
@@ -153,7 +153,7 @@ def test_prepare_single_ticker_strategy_with_optimisation(monkeypatch):
 
     start_date = datetime.date(2020, 1, 1)
     end_date = datetime.date(2020, 12, 31)
-    strategy_type = "Moving Average Crossover"
+    strategy_type = "Triple EMA Crossover (TEMO)"
     strategy_params = {}
     optimise = True
 
@@ -209,7 +209,7 @@ def test_prepare_single_ticker_strategy_with_optimisation_no_param_optimisation(
 
     start_date = datetime.date(2020, 1, 1)
     end_date = datetime.date(2020, 12, 31)
-    strategy_type = "Moving Average Crossover"
+    strategy_type = "Triple EMA Crossover (TEMO)"
     strategy_params = {}
     optimise = False
 

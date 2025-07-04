@@ -1,5 +1,5 @@
 """
-Tests for the Moving Average Crossover strategy class.
+Tests for the Triple EMA Crossover (TEMO) strategy class.
 """
 
 from datetime import date, timedelta
@@ -11,13 +11,13 @@ from quant_trading_strategy_backtester.strategies.moving_average_crossover impor
 )
 
 
-def test_moving_average_crossover_strategy_initialisation() -> None:
+def test_temo_strategy_initialisation() -> None:
     params = {"position_size": 0.05}
     strategy = MovingAverageCrossoverStrategy(params)
     assert strategy.position_size == 0.05
 
 
-def test_moving_average_crossover_strategy_generate_signals(
+def test_temo_strategy_generate_signals(
     mock_polars_data: pl.DataFrame,
 ) -> None:
     params: dict[str, float] = {}
@@ -30,7 +30,7 @@ def test_moving_average_crossover_strategy_generate_signals(
     assert signals["signal"].is_in([-1.0, 0.0, 1.0]).all()
 
 
-def test_moving_average_crossover_strategy_with_mock_polars_data():
+def test_temo_strategy_with_mock_polars_data():
     # Create mock data
     start_date = date(2023, 1, 1)
     dates = [start_date + timedelta(days=i) for i in range(100)]
