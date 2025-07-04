@@ -30,7 +30,7 @@ _Try the deployed app
 
 - Buy and Hold
 - Mean Reversion
-- Moving Average Crossover
+- Triple EMA (TEMO) Crossover
 - Pairs Trading
 
 ## Key Features
