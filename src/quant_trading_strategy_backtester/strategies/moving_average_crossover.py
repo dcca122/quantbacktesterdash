@@ -6,6 +6,7 @@ crossover of short-term and long-term moving averages of the closing price.
 from typing import Any
 
 import polars as pl
+
 from quant_trading_strategy_backtester.strategies.base import BaseStrategy
 
 

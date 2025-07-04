@@ -8,6 +8,7 @@ from typing import Any
 
 import polars as pl
 import pytest
+
 from quant_trading_strategy_backtester.backtester import Backtester
 from quant_trading_strategy_backtester.models import StrategyModel
 from quant_trading_strategy_backtester.strategies.base import BaseStrategy

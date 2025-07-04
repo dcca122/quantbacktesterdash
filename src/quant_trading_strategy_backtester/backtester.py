@@ -99,7 +99,11 @@ class Backtester:
                 self.data["Close_1"] - self.data["Close_1"].shift(1)
             ) / self.data["Close_1"].shift(1) - (
                 self.data["Close_2"] - self.data["Close_2"].shift(1)
-            ) / self.data["Close_2"].shift(1)
+            ) / self.data[
+                "Close_2"
+            ].shift(
+                1
+            )
         # Single asset trading
         elif "Close" in self.data.columns:
             asset_returns = (

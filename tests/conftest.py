@@ -5,9 +5,10 @@ Contains pytest fixtures for tests, such as mock data.
 import pandas as pd
 import polars as pl
 import pytest
-from quant_trading_strategy_backtester.models import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from quant_trading_strategy_backtester.models import Base
 
 
 @pytest.fixture

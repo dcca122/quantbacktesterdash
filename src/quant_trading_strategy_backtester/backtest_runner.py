@@ -32,11 +32,15 @@ def run_backtest(
     backtester = Backtester(data, strategy, tickers=tickers)
     results = backtester.run()
     metrics = backtester.get_performance_metrics()
-    assert metrics is not None, "No results available for the selected ticker and date range"
+    assert (
+        metrics is not None
+    ), "No results available for the selected ticker and date range"
     return results, metrics
 
 
-def create_strategy(strategy_type: str, strategy_params: dict[str, Any]) -> BaseStrategy:
+def create_strategy(
+    strategy_type: str, strategy_params: dict[str, Any]
+) -> BaseStrategy:
     """Create a trading strategy instance based on ``strategy_type``."""
     if strategy_type not in TRADING_STRATEGIES:
         raise ValueError("Invalid strategy type")

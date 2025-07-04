@@ -11,8 +11,8 @@ from typing import cast
 import streamlit as st
 import streamlit.web.cli as stcli
 
-from quant_trading_strategy_backtester.data import get_full_company_name
 from quant_trading_strategy_backtester.backtest_runner import run_backtest
+from quant_trading_strategy_backtester.data import get_full_company_name
 from quant_trading_strategy_backtester.results_history import display_historical_results
 from quant_trading_strategy_backtester.strategy_preparation import (
     prepare_pairs_trading_strategy_with_optimisation,
@@ -96,7 +96,9 @@ def main() -> None:
     )
 
     tickers: str | list[str] = (
-        ticker_display.split(" vs. ") if strategy_type == "Pairs Trading" else ticker_display
+        ticker_display.split(" vs. ")
+        if strategy_type == "Pairs Trading"
+        else ticker_display
     )
     results, metrics = run_backtest(data, strategy_type, strategy_params, tickers)
 

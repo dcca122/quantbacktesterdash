@@ -12,11 +12,10 @@ import streamlit as st
 
 from quant_trading_strategy_backtester.backtest_runner import run_backtest
 from quant_trading_strategy_backtester.data import (
+    is_same_company,
     load_yfinance_data_one_ticker,
     load_yfinance_data_two_tickers,
-    is_same_company,
 )
-from quant_trading_strategy_backtester.strategies.buy_and_hold import BuyAndHoldStrategy
 
 
 def optimise_buy_and_hold_ticker(
@@ -41,7 +40,6 @@ def optimise_buy_and_hold_ticker(
         if data is None or data.is_empty():
             continue
 
-        strategy = BuyAndHoldStrategy({})
         backtester = run_backtest(data, "Buy and Hold", {}, ticker)
         # run_backtest returns (results, metrics)
         _, metrics = backtester
@@ -76,7 +74,8 @@ def optimise_single_ticker_strategy_ticker(
     status_text = st.empty()
 
     fixed_params = {
-        k: v[0] if isinstance(v, (list, range)) else v for k, v in strategy_params.items()
+        k: v[0] if isinstance(v, (list, range)) else v
+        for k, v in strategy_params.items()
     }
 
     for i, (ticker, _) in enumerate(top_companies):
@@ -114,7 +113,10 @@ def optimise_strategy_params(
     best_sharpe_ratio = float("-inf")
 
     param_names = list(parameter_ranges.keys())
-    param_values = [list(value) if isinstance(value, range) else value for value in parameter_ranges.values()]
+    param_values = [
+        list(value) if isinstance(value, range) else value
+        for value in parameter_ranges.values()
+    ]
 
     param_combinations = list(itertools.product(*param_values))
     total_combinations = len(param_combinations)
@@ -122,7 +124,9 @@ def optimise_strategy_params(
     status_text = st.empty()
 
     for i, params in enumerate(param_combinations):
-        status_text.text(f"Evaluating parameter combination {i + 1} / {total_combinations}")
+        status_text.text(
+            f"Evaluating parameter combination {i + 1} / {total_combinations}"
+        )
         progress_bar.progress((i + 1) / total_combinations)
 
         current_params = dict(zip(param_names, params))
@@ -154,8 +158,12 @@ def optimise_pairs_trading_tickers(
     best_metrics = None
     best_sharpe_ratio = float("-inf")
 
-    ticker_pairs = list(itertools.combinations([company[0] for company in top_companies], 2))
-    ticker_pairs = [pair for pair in ticker_pairs if not is_same_company(pair[0], pair[1])]
+    ticker_pairs = list(
+        itertools.combinations([company[0] for company in top_companies], 2)
+    )
+    ticker_pairs = [
+        pair for pair in ticker_pairs if not is_same_company(pair[0], pair[1])
+    ]
     total_combinations = len(ticker_pairs)
     progress_bar = st.progress(0)
     status_text = st.empty()
@@ -174,12 +182,17 @@ def optimise_pairs_trading_tickers(
             continue
 
         if optimise:
-            param_ranges = {k: [v] if isinstance(v, (int, float)) else v for k, v in strategy_params.items()}
+            param_ranges = {
+                k: [v] if isinstance(v, (int, float)) else v
+                for k, v in strategy_params.items()
+            }
             current_params, current_metrics = optimise_strategy_params(
                 data, "Pairs Trading", param_ranges, [ticker1, ticker2]
             )
         else:
-            _, current_metrics = run_backtest(data, "Pairs Trading", strategy_params, [ticker1, ticker2])
+            _, current_metrics = run_backtest(
+                data, "Pairs Trading", strategy_params, [ticker1, ticker2]
+            )
             current_params = strategy_params
 
         if current_metrics["Sharpe Ratio"] > best_sharpe_ratio:
