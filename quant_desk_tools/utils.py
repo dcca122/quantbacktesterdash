@@ -7,7 +7,9 @@ import pandas as pd
 import yfinance as yf
 
 
-def get_historical_vix(ticker: str, window: int = 30, start: str | None = None, end: str | None = None) -> pd.DataFrame:
+def get_historical_vix(
+    ticker: str, window: int = 30, start: str | None = None, end: str | None = None
+) -> pd.DataFrame:
     """Return VIX-style historical volatility for a ticker.
 
     Parameters

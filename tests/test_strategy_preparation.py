@@ -1,4 +1,3 @@
-
 """Tests for backtesting helpers and strategy preparation functions."""
 
 import datetime
@@ -6,6 +5,7 @@ from typing import Any
 
 import polars as pl
 import pytest
+
 from quant_trading_strategy_backtester.optimiser import (
     optimise_single_ticker_strategy_ticker,
     run_backtest,

@@ -22,7 +22,11 @@ def display_historical_results() -> None:
         session.close()
     else:
         strategies = (
-            sorted(st.session_state.strategy_results, key=lambda x: x["date_created"], reverse=True)
+            sorted(
+                st.session_state.strategy_results,
+                key=lambda x: x["date_created"],
+                reverse=True,
+            )
             if "strategy_results" in st.session_state
             else []
         )
@@ -82,7 +86,9 @@ def display_historical_results() -> None:
                 st.subheader("Strategy Details")
                 st.write(f"**Strategy Type:** {strategy_name}")
                 st.write(f"**Ticker(s):** {ticker_display}")
-                st.write(f"**Date Created:** {date_created.strftime('%Y-%m-%d %H:%M:%S')}")
+                st.write(
+                    f"**Date Created:** {date_created.strftime('%Y-%m-%d %H:%M:%S')}"
+                )
                 st.write(f"**Start Date:** {start_date}")
                 st.write(f"**End Date:** {end_date}")
 
@@ -93,7 +99,11 @@ def display_historical_results() -> None:
             with col2:
                 st.subheader("Performance Metrics")
                 st.write(f"**Total Return:** {total_return:.2%}")
-                st.write(f"**Sharpe Ratio:** {sharpe_ratio:.2f}" if sharpe_ratio else "**Sharpe Ratio:** N/A")
+                st.write(
+                    f"**Sharpe Ratio:** {sharpe_ratio:.2f}"
+                    if sharpe_ratio
+                    else "**Sharpe Ratio:** N/A"
+                )
                 st.write(f"**Max Drawdown:** {max_drawdown:.2%}")
 
             st.write("---")

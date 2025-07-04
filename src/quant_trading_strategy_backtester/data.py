@@ -10,6 +10,7 @@ import pandas as pd
 import polars as pl
 import streamlit as st
 import yfinance as yf
+
 from quant_trading_strategy_backtester.utils import logger
 
 

@@ -5,14 +5,15 @@ Contains tests for optimisation functions.
 import datetime
 
 import polars as pl
-from quant_trading_strategy_backtester.strategy_preparation import (
-    prepare_buy_and_hold_strategy_with_optimisation,
-    prepare_pairs_trading_strategy_with_optimisation,
-)
+
 from quant_trading_strategy_backtester.optimiser import (
     optimise_buy_and_hold_ticker,
     optimise_pairs_trading_tickers,
     run_optimisation,
+)
+from quant_trading_strategy_backtester.strategy_preparation import (
+    prepare_buy_and_hold_strategy_with_optimisation,
+    prepare_pairs_trading_strategy_with_optimisation,
 )
 
 
@@ -88,7 +89,7 @@ def test_run_optimisation_buy_and_hold(monkeypatch):
     )
 
     strategy_type = "Buy and Hold"
-    initial_params = {}  # Buy and Hold has no parameters
+    initial_params: dict[str, float] = {}  # Buy and Hold has no parameters
     start_date = datetime.date(2020, 1, 1)
     end_date = datetime.date(2020, 12, 31)
 
@@ -325,4 +326,3 @@ def test_run_optimisation(monkeypatch):
     assert set(optimised_params.keys()) == set(initial_params.keys())
     assert isinstance(metrics, dict)
     assert "Sharpe Ratio" in metrics
-

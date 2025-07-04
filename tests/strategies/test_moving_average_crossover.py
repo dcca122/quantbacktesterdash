@@ -1,9 +1,11 @@
 """
 Tests for the Moving Average Crossover strategy class.
 """
+
 from datetime import date, timedelta
 
 import polars as pl
+
 from quant_trading_strategy_backtester.strategies.moving_average_crossover import (
     MovingAverageCrossoverStrategy,
 )
@@ -35,10 +37,9 @@ def test_moving_average_crossover_strategy_with_mock_polars_data():
     dates = [start_date + timedelta(days=i) for i in range(100)]
 
     # Create a price series with a clear trend change
-    prices = (
-        [100 + i for i in range(50)]  # Uptrend
-        + [150 - i for i in range(50)]  # Downtrend
-    )
+    prices = [100 + i for i in range(50)] + [  # Uptrend
+        150 - i for i in range(50)
+    ]  # Downtrend
 
     mock_polars_data = pl.DataFrame({"Date": dates, "Close": prices})
 

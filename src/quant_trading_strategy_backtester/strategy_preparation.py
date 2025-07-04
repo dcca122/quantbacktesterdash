@@ -46,7 +46,9 @@ def prepare_buy_and_hold_strategy_with_optimisation(
     )
 
     end_time = time.time()
-    st.success(f"Optimisation complete! Time taken: {end_time - start_time:.4f} seconds")
+    st.success(
+        f"Optimisation complete! Time taken: {end_time - start_time:.4f} seconds"
+    )
 
     st.header("Optimal Ticker")
     st.write(f"Best performing ticker: {best_ticker}")
@@ -92,7 +94,9 @@ def prepare_single_ticker_strategy_with_optimisation(
         }
 
     end_time = time.time()
-    st.success(f"Optimisation complete! Time taken: {end_time - start_time:.4f} seconds")
+    st.success(
+        f"Optimisation complete! Time taken: {end_time - start_time:.4f} seconds"
+    )
 
     st.header("Optimal Ticker and Parameters")
     result = {"ticker": best_ticker} | (best_params if optimise else {})
@@ -123,7 +127,9 @@ def prepare_pairs_trading_strategy_with_optimisation(
     ticker1, ticker2 = ticker
 
     end_time = time.time()
-    st.success(f"Optimisation complete! Time taken: {end_time - start_time:.4f} seconds")
+    st.success(
+        f"Optimisation complete! Time taken: {end_time - start_time:.4f} seconds"
+    )
 
     st.header("Optimal Tickers and Parameters")
     st.write({"ticker1": ticker1, "ticker2": ticker2} | strategy_params)

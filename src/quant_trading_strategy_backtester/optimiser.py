@@ -10,19 +10,19 @@ from typing import Any, cast
 import polars as pl
 import streamlit as st
 
-from quant_trading_strategy_backtester.data import get_top_sp500_companies
-from quant_trading_strategy_backtester.utils import NUM_TOP_COMPANIES_ONE_TICKER
 import quant_trading_strategy_backtester.optimiser_core as optimiser_core
+from quant_trading_strategy_backtester.backtest_runner import (
+    create_strategy,
+    run_backtest,
+)
+from quant_trading_strategy_backtester.data import get_top_sp500_companies
 from quant_trading_strategy_backtester.optimiser_core import (
     optimise_buy_and_hold_ticker,
     optimise_pairs_trading_tickers,
     optimise_single_ticker_strategy_ticker,
     optimise_strategy_params,
 )
-from quant_trading_strategy_backtester.backtest_runner import (
-    run_backtest,
-    create_strategy,
-)
+from quant_trading_strategy_backtester.utils import NUM_TOP_COMPANIES_ONE_TICKER
 
 
 def run_optimisation(

@@ -121,6 +121,19 @@ pip install -e .  # ensure the package itself is available
 pytest -v
 ```
 
+### Formatting, Linting and Type Checking
+
+Use the provided `Makefile` to keep the codebase consistent. After installing
+the dependencies run:
+
+```bash
+make fmt       # format code with Black and apply Ruff fixes
+make lint      # run Ruff linting
+make typecheck # run mypy type checks
+```
+
+These checks run in CI, so ensure they pass before submitting changes.
+
 ### Rate Limiting Issues with Yahoo Finance
 
 Note that you may encounter rate limiting issues with Yahoo Finance resulting in

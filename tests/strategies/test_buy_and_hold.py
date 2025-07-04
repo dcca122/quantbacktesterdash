@@ -1,20 +1,22 @@
 """
 Tests for the Buy and Hold strategy class.
 """
+
 from datetime import date, timedelta
 
 import polars as pl
+
 from quant_trading_strategy_backtester.strategies.buy_and_hold import BuyAndHoldStrategy
 
 
 def test_buy_and_hold_strategy_initialisation() -> None:
-    params = {}  # Buy and Hold doesn't require parameters
+    params: dict[str, float] = {}  # Buy and Hold doesn't require parameters
     strategy = BuyAndHoldStrategy(params)
     assert isinstance(strategy, BuyAndHoldStrategy)
 
 
 def test_buy_and_hold_strategy_generate_signals(mock_polars_data: pl.DataFrame) -> None:
-    params = {}
+    params: dict[str, float] = {}
     strategy = BuyAndHoldStrategy(params)
     signals = strategy.generate_signals(mock_polars_data)
     assert isinstance(signals, pl.DataFrame)
@@ -32,7 +34,7 @@ def test_buy_and_hold_strategy_with_mock_data():
 
     mock_polars_data = pl.DataFrame({"Date": dates, "Close": prices})
 
-    params = {}
+    params: dict[str, float] = {}
     strategy = BuyAndHoldStrategy(params)
 
     # Generate signals
@@ -48,7 +50,7 @@ def test_buy_and_hold_strategy_with_mock_data():
 
 def test_buy_and_hold_strategy_with_empty_data():
     empty_data = pl.DataFrame(schema=[("Date", pl.Date), ("Close", pl.Float64)])
-    params = {}
+    params: dict[str, float] = {}
     strategy = BuyAndHoldStrategy(params)
     signals = strategy.generate_signals(empty_data)
 
@@ -72,7 +74,7 @@ def test_buy_and_hold_strategy_with_various_price_movements():
 
     mock_polars_data = pl.DataFrame({"Date": dates, "Close": prices})
 
-    params = {}
+    params: dict[str, float] = {}
     strategy = BuyAndHoldStrategy(params)
 
     # Generate signals
