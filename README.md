@@ -1,7 +1,8 @@
 # Quant Trading Strategy Backtester
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Test](https://github.com/IsaacCheng9/quant-trading-strategy-backtester/actions/workflows/test.yml/badge.svg)](https://github.com/IsaacCheng9/quant-trading-strategy-backtester/actions/workflows/test.yml)
+[![CI](https://github.com/IsaacCheng9/quant-trading-strategy-backtester/actions/workflows/test.yml/badge.svg)](https://github.com/IsaacCheng9/quant-trading-strategy-backtester/actions/workflows/test.yml)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
 
 A quantitative trading strategy backtester with an interactive dashboard.
 Enables users to implement, test, and visualise trading strategies using
@@ -42,6 +43,11 @@ _Try the deployed app
 - Visualisation of equity curves and strategy returns
 - Performance metrics including Total Return, Sharpe Ratio, and Max Drawdown
 - Monthly performance table with rolling returns
+
+## Supported Python Versions
+
+The application is tested on **Python 3.10**, **3.11** and **3.12** in CI. Other
+versions are not officially supported.
 
 ## Performance Benchmark of pandas vs. Polars Implementation
 
@@ -166,3 +172,8 @@ Note that you may encounter rate limiting issues with Yahoo Finance resulting in
 slow data fetches in the app – unfortunately this is out of my control. You
 could work around this by using a VPN, or wait for a while before trying again.
 Sometimes upgrading the `yfinance` package to the latest version can also help.
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup
+instructions, common workflows and troubleshooting tips.
