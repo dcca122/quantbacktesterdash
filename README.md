@@ -70,16 +70,24 @@ The full benchmark results can be found in the CSV files in the
 
 ### Installing Dependencies
 
-This project requires **Python 3.10 or higher**.
+This project requires **Python 3.10 or higher**. To install the required
+packages locally:
 
-Run the following command from the [project root](./) directory:
+1. Install `uv` if you do not already have it:
 
-```bash
-uv sync --all-extras --dev
-```
+   ```bash
+   pip install uv
+   ```
 
-All dependencies are managed in [pyproject.toml](./pyproject.toml). To
-regenerate `requirements.txt` from this file, run:
+2. From the [project root](./) directory, install all dependencies (including
+   development packages) with:
+
+   ```bash
+   uv sync --all-extras --dev
+   ```
+
+All dependencies are managed in [pyproject.toml](./pyproject.toml). To regenerate
+`requirements.txt` from this file, run:
 
 ```bash
 uv pip compile pyproject.toml > requirements.txt
@@ -91,6 +99,15 @@ Run the following command from the [project root](./) directory:
 
 ```bash
 uv run python -m quant_trading_strategy_backtester.app
+```
+
+### Running Tests
+
+After installing the dependencies you can run the unit tests with
+[pytest](https://docs.pytest.org/). Execute the following from the project root:
+
+```bash
+uv run -m pytest -v
 ```
 
 ### Rate Limiting Issues with Yahoo Finance
