@@ -70,6 +70,8 @@ The full benchmark results can be found in the CSV files in the
 
 ### Installing Dependencies
 
+This project requires **Python 3.10 or higher**.
+
 Run the following command from the [project root](./) directory:
 
 ```bash
