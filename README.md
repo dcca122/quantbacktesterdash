@@ -78,6 +78,13 @@ Run the following command from the [project root](./) directory:
 uv sync --all-extras --dev
 ```
 
+All dependencies are managed in [pyproject.toml](./pyproject.toml). To
+regenerate `requirements.txt` from this file, run:
+
+```bash
+uv pip compile pyproject.toml > requirements.txt
+```
+
 ### Running the Application Locally
 
 Run the following command from the [project root](./) directory:
