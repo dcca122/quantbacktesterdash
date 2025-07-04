@@ -112,6 +112,15 @@ After installing the dependencies you can run the unit tests with
 uv run -m pytest -v
 ```
 
+If you do not wish to use `uv`, you can instead install dependencies with
+`pip`:
+
+```bash
+pip install -r requirements.txt
+pip install -e .  # ensure the package itself is available
+pytest -v
+```
+
 ### Rate Limiting Issues with Yahoo Finance
 
 Note that you may encounter rate limiting issues with Yahoo Finance resulting in
