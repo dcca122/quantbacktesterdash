@@ -67,7 +67,8 @@ def main() -> None:
         company_name1 = get_full_company_name(ticker1)
         company_name2 = get_full_company_name(ticker2)
     elif (
-        strategy_type in ["Buy and Hold", "Mean Reversion", "Moving Average Crossover"]
+        strategy_type
+        in ["Buy and Hold", "Mean Reversion", "Triple EMA Crossover (TEMO)"]
         and auto_select_tickers
     ):
         data, ticker_display, strategy_params = (

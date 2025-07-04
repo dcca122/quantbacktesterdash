@@ -48,7 +48,7 @@ def create_strategy(
     match strategy_type:
         case "Buy and Hold":
             return BuyAndHoldStrategy(strategy_params)
-        case "Moving Average Crossover":
+        case "Triple EMA Crossover (TEMO)":
             return MovingAverageCrossoverStrategy(strategy_params)
         case "Mean Reversion":
             return MeanReversionStrategy(strategy_params)

@@ -229,7 +229,7 @@ def test_backtester_save_results(mock_db_session, mock_polars_data):
 
     assert saved_strategy is not None
     print("Saved strategy:", saved_strategy.__dict__)
-    assert saved_strategy.parameters == '{}'
+    assert saved_strategy.parameters == "{}"
     assert saved_strategy.total_return is not None
 
     # Check if sharpe_ratio is either NaN or None
