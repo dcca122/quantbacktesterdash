@@ -2,7 +2,7 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 import numpy as np
-from quant_desk_tools.vix_calculator import get_historical_vix
+from quant_desk_tools import get_historical_vix
 from quant_desk_tools.black_scholes import black_scholes_price
 
 def assign_single_column(df, column_name, data):

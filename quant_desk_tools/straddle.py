@@ -1,18 +1,6 @@
-import numpy as np
-import pandas as pd
-import yfinance as yf
+"""Example script demonstrating usage of ``get_historical_vix``."""
 
-def get_historical_vix(ticker, window=30, start=None, end=None):
-    """
-    Computes VIX-style (annualized window-day rolling historical volatility) for any ticker.
-    Returns: pd.DataFrame with Date and VIX columns.
-    """
-    df = yf.download(ticker, start=start, end=end, auto_adjust=True)
-    df['Return'] = np.log(df['Close'] / df['Close'].shift(1))
-    df['RealizedVol'] = df['Return'].rolling(window).std() * np.sqrt(252)  # annualized
-    df['VIX'] = df['RealizedVol'] * 100  # convert to percent
-    vix_df = df[['VIX']].dropna().reset_index()
-    return vix_df
+from .vix_calculator import get_historical_vix
 
 # Optional: direct script test (does nothing unless run as script)
 if __name__ == "__main__":
