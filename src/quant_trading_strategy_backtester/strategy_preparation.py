@@ -14,12 +14,12 @@ from quant_trading_strategy_backtester.data import (
     load_yfinance_data_one_ticker,
     load_yfinance_data_two_tickers,
 )
-from quant_trading_strategy_backtester.optimiser import (
+from quant_trading_strategy_backtester.optimiser import run_optimisation
+from quant_trading_strategy_backtester.optimiser_core import (
     optimise_buy_and_hold_ticker,
     optimise_pairs_trading_tickers,
     optimise_single_ticker_strategy_ticker,
     optimise_strategy_params,
-    run_optimisation,
 )
 from quant_trading_strategy_backtester.utils import (
     NUM_TOP_COMPANIES_ONE_TICKER,

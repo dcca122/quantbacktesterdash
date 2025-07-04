@@ -91,11 +91,11 @@ def test_optimise_single_ticker_strategy_ticker(monkeypatch):
             return None, {"Sharpe Ratio": 1.0}
 
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.optimiser.load_yfinance_data_one_ticker",
+        "quant_trading_strategy_backtester.optimiser_core.load_yfinance_data_one_ticker",
         mock_load_data,
     )
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.optimiser.run_backtest",
+        "quant_trading_strategy_backtester.optimiser_core.run_backtest",
         mock_run_backtest,
     )
 
