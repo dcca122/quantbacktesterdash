@@ -1,3 +1,5 @@
+"""Entry point for running the Streamlit application via ``python -m``."""
+
 from . import app
 
 if __name__ == "__main__":
