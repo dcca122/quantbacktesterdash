@@ -18,7 +18,7 @@ from quant_trading_strategy_backtester.strategy_preparation import (
 @pytest.mark.parametrize(
     "strategy_type,params,tickers",
     [
-        ("Moving Average Crossover", {"short_window": 5, "long_window": 20}, "AAPL"),
+        ("Moving Average Crossover", {}, "AAPL"),
         ("Mean Reversion", {"window": 5, "std_dev": 2.0}, "AAPL"),
         (
             "Pairs Trading",
@@ -102,7 +102,7 @@ def test_optimise_single_ticker_strategy_ticker(monkeypatch):
     start_date = datetime.date(2020, 1, 1)
     end_date = datetime.date(2020, 12, 31)
     strategy_type = "Moving Average Crossover"
-    strategy_params = {"short_window": 10, "long_window": 50}
+    strategy_params = {}
 
     best_ticker = optimise_single_ticker_strategy_ticker(
         mock_top_companies, start_date, end_date, strategy_type, strategy_params
@@ -132,7 +132,7 @@ def test_prepare_single_ticker_strategy_with_optimisation(monkeypatch):
         return mock_polars_data
 
     def mock_optimise_strategy_params(*args, **kwargs):
-        return {"short_window": 15, "long_window": 60}, {"Sharpe Ratio": 1.8}
+        return {}, {"Sharpe Ratio": 1.8}
 
     monkeypatch.setattr(
         "quant_trading_strategy_backtester.strategy_preparation.get_top_sp500_companies",
@@ -154,10 +154,7 @@ def test_prepare_single_ticker_strategy_with_optimisation(monkeypatch):
     start_date = datetime.date(2020, 1, 1)
     end_date = datetime.date(2020, 12, 31)
     strategy_type = "Moving Average Crossover"
-    strategy_params = {
-        "short_window": range(5, 30, 5),
-        "long_window": range(20, 100, 10),
-    }
+    strategy_params = {}
     optimise = True
 
     data, ticker_display, optimised_params = (
@@ -170,9 +167,7 @@ def test_prepare_single_ticker_strategy_with_optimisation(monkeypatch):
     assert isinstance(ticker_display, str)
     assert ticker_display == "AAPL"
     assert isinstance(optimised_params, dict)
-    assert set(optimised_params.keys()) == {"short_window", "long_window"}
-    assert optimised_params["short_window"] == 15
-    assert optimised_params["long_window"] == 60
+    assert optimised_params == {}
 
 
 def test_prepare_single_ticker_strategy_with_optimisation_no_param_optimisation(
@@ -197,7 +192,7 @@ def test_prepare_single_ticker_strategy_with_optimisation_no_param_optimisation(
         return mock_polars_data
 
     def mock_optimise_strategy_params(*args, **kwargs):
-        return {"short_window": 15, "long_window": 60}, {"Sharpe Ratio": 1.8}
+        return {}, {"Sharpe Ratio": 1.8}
 
     monkeypatch.setattr(
         "quant_trading_strategy_backtester.strategy_preparation.get_top_sp500_companies",
@@ -215,7 +210,7 @@ def test_prepare_single_ticker_strategy_with_optimisation_no_param_optimisation(
     start_date = datetime.date(2020, 1, 1)
     end_date = datetime.date(2020, 12, 31)
     strategy_type = "Moving Average Crossover"
-    strategy_params = {"short_window": 10, "long_window": 50}
+    strategy_params = {}
     optimise = False
 
     data, ticker_display, final_params = (
@@ -228,4 +223,4 @@ def test_prepare_single_ticker_strategy_with_optimisation_no_param_optimisation(
     assert isinstance(ticker_display, str)
     assert ticker_display == "AAPL"
     assert isinstance(final_params, dict)
-    assert final_params == strategy_params  # Parameters should remain unchanged
+    assert final_params == strategy_params

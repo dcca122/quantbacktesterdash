@@ -28,7 +28,7 @@ from quant_trading_strategy_backtester.strategies.pairs_trading import (
     [
         (
             MovingAverageCrossoverStrategy,
-            {"short_window": 5, "long_window": 20},
+            {},
             "mock_polars_data",
         ),
         (MeanReversionStrategy, {"window": 5, "std_dev": 2.0}, "mock_polars_data"),
@@ -63,7 +63,7 @@ def test_backtester_initialisation(
     [
         (
             MovingAverageCrossoverStrategy,
-            {"short_window": 5, "long_window": 20},
+            {},
             "mock_polars_data",
         ),
         (MeanReversionStrategy, {"window": 5, "std_dev": 2.0}, "mock_polars_data"),
@@ -95,7 +95,7 @@ def test_backtester_run(
     [
         (
             MovingAverageCrossoverStrategy,
-            {"short_window": 5, "long_window": 20},
+            {},
             "mock_polars_data",
         ),
         (MeanReversionStrategy, {"window": 5, "std_dev": 2.0}, "mock_polars_data"),
@@ -126,7 +126,7 @@ def test_backtester_get_performance_metrics(
 @pytest.mark.parametrize(
     "strategy_class,params",
     [
-        (MovingAverageCrossoverStrategy, {"short_window": 5, "long_window": 20}),
+        (MovingAverageCrossoverStrategy, {}),
         (MeanReversionStrategy, {"window": 5, "std_dev": 2.0}),
         (
             PairsTradingStrategy,
@@ -165,7 +165,7 @@ def test_backtester_with_invalid_data(
 @pytest.mark.parametrize(
     "strategy_class,params",
     [
-        (MovingAverageCrossoverStrategy, {"short_window": 5, "long_window": 20}),
+        (MovingAverageCrossoverStrategy, {}),
         (MeanReversionStrategy, {"window": 5, "std_dev": 2.0}),
         (
             PairsTradingStrategy,
@@ -189,6 +189,9 @@ def test_backtester_with_insufficient_data_all_strategies(
         insufficient_data = pl.DataFrame(
             {
                 "Date": dates,
+                "Open": [100, 101],
+                "High": [101, 102],
+                "Low": [99, 100],
                 "Close": [100, 101],
             }
         )
@@ -209,7 +212,7 @@ def test_backtester_with_insufficient_data_all_strategies(
 
 
 def test_backtester_save_results(mock_db_session, mock_polars_data):
-    strategy = MovingAverageCrossoverStrategy({"short_window": 5, "long_window": 20})
+    strategy = MovingAverageCrossoverStrategy({})
     backtester = Backtester(mock_polars_data, strategy, session=mock_db_session)
     backtester.run()
 
@@ -226,7 +229,7 @@ def test_backtester_save_results(mock_db_session, mock_polars_data):
 
     assert saved_strategy is not None
     print("Saved strategy:", saved_strategy.__dict__)
-    assert saved_strategy.parameters == '{"short_window": 5, "long_window": 20}'
+    assert saved_strategy.parameters == '{}'
     assert saved_strategy.total_return is not None
 
     # Check if sharpe_ratio is either NaN or None

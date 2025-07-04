@@ -90,10 +90,7 @@ def get_optimisation_ranges(strategy_type: str) -> dict[str, Any]:
 
     match strategy_type:
         case "Moving Average Crossover":
-            return {
-                "short_window": range(5, 51, 5),
-                "long_window": range(20, 201, 20),
-            }
+            return {"position_size": [0.01, 0.02, 0.03, 0.05]}
         case "Mean Reversion":
             return {
                 "window": range(5, 101, 5),
@@ -126,13 +123,14 @@ def get_fixed_params(strategy_type: str) -> dict[str, Any]:
 
     match strategy_type:
         case "Moving Average Crossover":
-            short_window = st.sidebar.slider(
-                "Short Window (Days)", min_value=5, max_value=50, value=20
+            position_size = st.sidebar.slider(
+                "Position Size (% of capital)",
+                min_value=0.01,
+                max_value=0.1,
+                value=0.03,
+                step=0.01,
             )
-            long_window = st.sidebar.slider(
-                "Long Window (Days)", min_value=20, max_value=200, value=50
-            )
-            return {"short_window": short_window, "long_window": long_window}
+            return {"position_size": position_size}
         case "Mean Reversion":
             window = st.sidebar.slider(
                 "Window (Days)", min_value=5, max_value=100, value=20

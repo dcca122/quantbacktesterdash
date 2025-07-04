@@ -22,7 +22,7 @@ from quant_trading_strategy_backtester.strategies.pairs_trading import (
 @pytest.mark.parametrize(
     "strategy_class,params",
     [
-        (MovingAverageCrossoverStrategy, {"short_window": 5, "long_window": 20}),
+        (MovingAverageCrossoverStrategy, {}),
         (MeanReversionStrategy, {"window": 5, "std_dev": 2.0}),
         (
             PairsTradingStrategy,
