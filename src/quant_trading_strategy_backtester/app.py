@@ -12,7 +12,7 @@ import streamlit as st
 import streamlit.web.cli as stcli
 
 from quant_trading_strategy_backtester.data import get_full_company_name
-from quant_trading_strategy_backtester.optimiser import run_backtest
+from quant_trading_strategy_backtester.backtest_runner import run_backtest
 from quant_trading_strategy_backtester.results_history import display_historical_results
 from quant_trading_strategy_backtester.strategy_preparation import (
     prepare_pairs_trading_strategy_with_optimisation,

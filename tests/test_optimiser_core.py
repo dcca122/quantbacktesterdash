@@ -33,11 +33,12 @@ def test_optimise_buy_and_hold_ticker(monkeypatch):
         return None, {"Total Return": 0.3, "Sharpe Ratio": 1.5, "Max Drawdown": -0.1}
 
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.data.load_yfinance_data_one_ticker",
+        "quant_trading_strategy_backtester.optimiser_core.load_yfinance_data_one_ticker",
         mock_load_data,
     )
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.optimiser.run_backtest", mock_run_backtest
+        "quant_trading_strategy_backtester.optimiser_core.run_backtest",
+        mock_run_backtest,
     )
 
     start_date = datetime.date(2020, 1, 1)
@@ -171,11 +172,24 @@ def test_optimise_pairs_trading_tickers(monkeypatch):
         }
 
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.data.load_yfinance_data_two_tickers",
+        "quant_trading_strategy_backtester.optimiser_core.load_yfinance_data_two_tickers",
         mock_load_data,
     )
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.optimiser.run_backtest", mock_run_backtest
+        "quant_trading_strategy_backtester.optimiser_core.run_backtest",
+        mock_run_backtest,
+    )
+    monkeypatch.setattr(
+        "quant_trading_strategy_backtester.optimiser.optimise_strategy_params",
+        mock_optimise_strategy_params,
+    )
+    monkeypatch.setattr(
+        "quant_trading_strategy_backtester.optimiser_core.optimise_strategy_params",
+        mock_optimise_strategy_params,
+    )
+    monkeypatch.setattr(
+        "quant_trading_strategy_backtester.optimiser.optimise_strategy_params",
+        mock_optimise_strategy_params,
     )
     monkeypatch.setattr(
         "quant_trading_strategy_backtester.optimiser.optimise_strategy_params",
@@ -288,7 +302,7 @@ def test_run_optimisation(monkeypatch):
         return {"window": 25, "std_dev": 2.5}, {"Sharpe Ratio": 1.8}
 
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.optimiser.optimise_strategy_params",
+        "quant_trading_strategy_backtester.optimiser_core.optimise_strategy_params",
         mock_optimise_strategy_params,
     )
 
