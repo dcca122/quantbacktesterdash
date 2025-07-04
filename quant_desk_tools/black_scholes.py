@@ -1,3 +1,5 @@
+"""Utility functions for pricing options using the Black-Scholes model."""
+
 import numpy as np
 from scipy.stats import norm
 

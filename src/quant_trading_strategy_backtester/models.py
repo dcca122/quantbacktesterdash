@@ -1,3 +1,5 @@
+"""SQLAlchemy models used for storing backtest results."""
+
 import datetime
 
 from sqlalchemy import (

@@ -1,5 +1,6 @@
+"""Compute historical volatility metrics similar to the VIX index."""
+
 import numpy as np
-import pandas as pd
 import yfinance as yf
 
 def get_historical_vix(ticker, window=30, start=None, end=None):
