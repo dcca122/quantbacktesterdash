@@ -100,11 +100,11 @@ def mock_yfinance_functions(monkeypatch):
         mock_load_two_tickers,
     )
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.app.load_yfinance_data_one_ticker",
+        "quant_trading_strategy_backtester.strategy_preparation.load_yfinance_data_one_ticker",
         mock_load_one_ticker,
     )
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.app.load_yfinance_data_two_tickers",
+        "quant_trading_strategy_backtester.strategy_preparation.load_yfinance_data_two_tickers",
         mock_load_two_tickers,
     )
     monkeypatch.setattr(
