@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
-from alembic import context
+from typing import Any, cast
 
+from sqlalchemy import engine_from_config, pool
+
+from alembic import context
 from quant_trading_strategy_backtester.models import Base
 
 config = context.config
-fileConfig(config.config_file_name)
+fileConfig(cast(str, config.config_file_name))
 
 target_metadata = Base.metadata
 
@@ -27,7 +29,7 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        cast(dict[str, Any], config.get_section(config.config_ini_section)),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

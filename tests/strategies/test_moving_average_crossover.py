@@ -20,7 +20,7 @@ def test_moving_average_crossover_strategy_initialisation() -> None:
 def test_moving_average_crossover_strategy_generate_signals(
     mock_polars_data: pl.DataFrame,
 ) -> None:
-    params = {}
+    params: dict[str, float] = {}
     strategy = MovingAverageCrossoverStrategy(params)
     signals = strategy.generate_signals(mock_polars_data)
     assert isinstance(signals, pl.DataFrame)

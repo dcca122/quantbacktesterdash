@@ -9,6 +9,41 @@ from quant_desk_tools import get_historical_vix
 from quant_desk_tools.black_scholes import black_scholes_price
 
 
+def compute_metrics(returns: pd.Series) -> dict[str, float]:
+    """Calculate common performance metrics from a returns series."""
+    cumulative = (1 + returns.fillna(0)).cumprod()
+    total_return = cumulative.iloc[-1] - 1
+    std = returns.std()
+    sharpe_ratio = np.sqrt(252) * returns.mean() / std if std != 0 else np.nan
+    drawdown = cumulative / cumulative.cummax() - 1
+    max_drawdown = drawdown.min()
+    return {
+        "Total Return": total_return,
+        "Sharpe Ratio": sharpe_ratio,
+        "Max Drawdown": max_drawdown,
+    }
+
+
+def display_performance_summary(
+    asset: str,
+    strategy: str,
+    start: object,
+    end: object,
+    metrics: dict[str, float],
+) -> None:
+    """Render the unified performance summary panel."""
+    st.subheader("Performance Summary")
+    label = (
+        f"Sharpe Ratio for {asset} using {strategy} from {start} to {end}: "
+        f"{metrics['Sharpe Ratio']:.4f}"
+    )
+    st.write(label)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Total Return", f"{metrics['Total Return']*100:.2f}%")
+    col2.metric("Max Drawdown", f"{metrics['Max Drawdown']*100:.2f}%")
+    col3.metric("Sharpe Ratio", f"{metrics['Sharpe Ratio']:.4f}")
+
+
 def assign_single_column(df, column_name, data):
     # If it's a DataFrame, pick the first column
     if isinstance(data, pd.DataFrame):
@@ -33,11 +68,6 @@ tool_type = st.sidebar.selectbox(
 ticker = st.sidebar.text_input("Ticker Symbol:", "AAPL")
 start_date = st.sidebar.date_input("Start Date", value=pd.to_datetime("2020-01-01"))
 end_date = st.sidebar.date_input("End Date", value=pd.to_datetime("2025-07-01"))
-
-# Download historical data using user input
-df = yf.download(ticker, start=start_date, end=end_date, auto_adjust=True)
-st.write(f"Showing historical data for {ticker} from {start_date} to {end_date}:")
-st.dataframe(df.head())
 
 # ----- MAIN CONTENT -----
 if tool_type == "VIX Calculator":
@@ -69,11 +99,13 @@ elif tool_type == "Buy and Hold":
                 raise ValueError("Close price column not found!")
             data["Returns"] = data["Close"].pct_change()
             data["Cumulative"] = (1 + data["Returns"].fillna(0)).cumprod()
-            st.line_chart(data["Cumulative"])
-            st.write(data.tail())
-            st.metric(
-                "Total Return (%)", f"{100*(data['Cumulative'].iloc[-1] - 1):.2f}"
+            metrics = compute_metrics(data["Returns"])
+            display_performance_summary(
+                ticker, "Buy and Hold", start_date, end_date, metrics
             )
+            st.line_chart(data["Cumulative"])
+            with st.expander("Show Historical Data"):
+                st.dataframe(data.tail())
         except Exception as e:
             st.error(f"Error: {e}")
 
@@ -112,15 +144,24 @@ elif tool_type == "Mean Reversion":
             data["Position"] = data["Signal"].replace(to_replace=0, method="ffill")
             data["Returns"] = data["Close"].pct_change() * data["Position"].shift(1)
             data["Cumulative"] = (1 + data["Returns"].fillna(0)).cumprod()
+            metrics = compute_metrics(data["Returns"])
+            display_performance_summary(
+                ticker, "Mean Reversion", start_date, end_date, metrics
+            )
             st.line_chart(data["Cumulative"])
-            st.write(
-                data[
-                    ["Close", "zscore", "Signal", "Position", "Returns", "Cumulative"]
-                ].tail()
-            )
-            st.metric(
-                "Total Return (%)", f"{100*(data['Cumulative'].iloc[-1] - 1):.2f}"
-            )
+            with st.expander("Show Historical Data"):
+                st.dataframe(
+                    data[
+                        [
+                            "Close",
+                            "zscore",
+                            "Signal",
+                            "Position",
+                            "Returns",
+                            "Cumulative",
+                        ]
+                    ].tail()
+                )
         except Exception as e:
             st.error(f"Error: {e}")
 
@@ -150,23 +191,25 @@ elif tool_type == "Moving Average Crossover":
             data["Position"] = data["Signal"].replace(to_replace=0, method="ffill")
             data["Returns"] = data["Close"].pct_change() * data["Position"].shift(1)
             data["Cumulative"] = (1 + data["Returns"].fillna(0)).cumprod()
+            metrics = compute_metrics(data["Returns"])
+            display_performance_summary(
+                ticker, "Moving Average Crossover", start_date, end_date, metrics
+            )
             st.line_chart(data["Cumulative"])
-            st.write(
-                data[
-                    [
-                        "Close",
-                        "SMA_short",
-                        "SMA_long",
-                        "Signal",
-                        "Position",
-                        "Returns",
-                        "Cumulative",
-                    ]
-                ].tail()
-            )
-            st.metric(
-                "Total Return (%)", f"{100*(data['Cumulative'].iloc[-1] - 1):.2f}"
-            )
+            with st.expander("Show Historical Data"):
+                st.dataframe(
+                    data[
+                        [
+                            "Close",
+                            "SMA_short",
+                            "SMA_long",
+                            "Signal",
+                            "Position",
+                            "Returns",
+                            "Cumulative",
+                        ]
+                    ].tail()
+                )
         except Exception as e:
             st.error(f"Error: {e}")
 
@@ -205,13 +248,17 @@ elif tool_type == "Pairs Trading":
             position = position.replace(to_replace=0, method="ffill")
             returns = (close1.pct_change() - close2.pct_change()) * position.shift(1)
             cumulative = (1 + returns.fillna(0)).cumprod()
-            st.line_chart(cumulative)
-            st.write(
-                pd.DataFrame(
-                    {"Spread": spread, "Z-Score": zscore, "Position": position}
-                ).tail()
+            metrics = compute_metrics(returns)
+            display_performance_summary(
+                f"{ticker} & {ticker2}", "Pairs Trading", start_date, end_date, metrics
             )
-            st.metric("Total Return (%)", f"{100*(cumulative.iloc[-1] - 1):.2f}")
+            st.line_chart(cumulative)
+            with st.expander("Show Historical Data"):
+                st.dataframe(
+                    pd.DataFrame(
+                        {"Spread": spread, "Z-Score": zscore, "Position": position}
+                    ).tail()
+                )
         except Exception as e:
             st.error(f"Error: {e}")
 
