@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.13.x"
+          - "3.10.x"
 
     steps:
       - uses: actions/checkout@main
