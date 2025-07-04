@@ -92,6 +92,8 @@ All dependencies are managed in [pyproject.toml](./pyproject.toml). To regenerat
 ```bash
 uv pip compile pyproject.toml > requirements.txt
 ```
+The `requirements.txt` file is generated automatically from the project
+configuration; edit `pyproject.toml` when adding or removing dependencies.
 
 ### Running the Application Locally
 
