@@ -90,7 +90,7 @@ uv pip compile pyproject.toml > requirements.txt
 Run the following command from the [project root](./) directory:
 
 ```bash
-uv run streamlit run src/quant_trading_strategy_backtester/app.py
+uv run python -m quant_trading_strategy_backtester.app
 ```
 
 ### Rate Limiting Issues with Yahoo Finance
