@@ -6,6 +6,7 @@ import datetime
 
 import pandas as pd
 import polars as pl
+
 from quant_trading_strategy_backtester.data import (
     get_full_company_name,
     is_same_company,

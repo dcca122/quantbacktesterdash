@@ -5,9 +5,10 @@ Contains pytest fixtures for tests, such as mock data.
 import pandas as pd
 import polars as pl
 import pytest
-from quant_trading_strategy_backtester.models import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from quant_trading_strategy_backtester.models import Base
 
 
 @pytest.fixture
@@ -100,19 +101,11 @@ def mock_yfinance_functions(monkeypatch):
         mock_load_two_tickers,
     )
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.app.load_yfinance_data_one_ticker",
+        "quant_trading_strategy_backtester.strategy_preparation.load_yfinance_data_one_ticker",
         mock_load_one_ticker,
     )
     monkeypatch.setattr(
-        "quant_trading_strategy_backtester.app.load_yfinance_data_two_tickers",
-        mock_load_two_tickers,
-    )
-    monkeypatch.setattr(
-        "quant_trading_strategy_backtester.optimiser.load_yfinance_data_one_ticker",
-        mock_load_one_ticker,
-    )
-    monkeypatch.setattr(
-        "quant_trading_strategy_backtester.optimiser.load_yfinance_data_two_tickers",
+        "quant_trading_strategy_backtester.strategy_preparation.load_yfinance_data_two_tickers",
         mock_load_two_tickers,
     )
 
@@ -120,12 +113,14 @@ def mock_yfinance_functions(monkeypatch):
 @pytest.fixture(autouse=True)
 def mock_yfinance_download(monkeypatch):
     def mock_download(*args, **kwargs):
+        dates = pd.date_range(start="2020-01-01", end="2020-12-31")
+        n = len(dates)
         return pd.DataFrame(
             {
-                "Date": pd.date_range(start="2020-01-01", end="2020-12-31"),
-                "Close": [100 + i * 0.1 for i in range(365)],
-                "Adj Close": [100 + i * 0.1 for i in range(365)],
-                "Volume": [1000000 for _ in range(365)],
+                "Date": dates,
+                "Close": [100 + i * 0.1 for i in range(n)],
+                "Adj Close": [100 + i * 0.1 for i in range(n)],
+                "Volume": [1000000 for _ in range(n)],
             }
         ).set_index("Date")
 

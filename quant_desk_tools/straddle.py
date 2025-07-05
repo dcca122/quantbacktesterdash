@@ -14,7 +14,7 @@ def get_historical_vix(ticker, window=30, start=None, end=None):
     vix_df = df[['VIX']].dropna().reset_index()
     return vix_df
 
-# Optional: direct script test (does nothing unless run as script)
+# Optional: direct script test (does nothing if imported)
 if __name__ == "__main__":
-    vix_df = get_historical_vix('AAPL', window=30, start='2022-01-01', end='2024-01-01')
+    vix_df = get_historical_vix("AAPL", window=30)
     print(vix_df.head())

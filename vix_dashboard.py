@@ -1,8 +1,5 @@
 import streamlit as st
 import yfinance as yf
-import pandas as pd
-import numpy as np
-from quant_desk_tools.vix_calculator import get_historical_vix
 from quant_desk_tools.black_scholes import black_scholes_price
 
 def assign_single_column(df, column_name, data):
@@ -18,34 +15,17 @@ tool_type = st.sidebar.selectbox(
     [
         "Buy and Hold",
         "Mean Reversion",
-        "Moving Average Crossover",
         "Pairs Trading",
         "VIX Calculator",
-        "Black-Scholes Option Pricing"
-    ]
 )
 
 ticker = st.sidebar.text_input("Ticker Symbol:", "AAPL")
-start_date = st.sidebar.date_input('Start Date', value=pd.to_datetime("2020-01-01"))
-end_date = st.sidebar.date_input('End Date', value=pd.to_datetime("2025-07-01"))
-
-# Download historical data using user input
-df = yf.download(
-    ticker,
-    start=start_date,
-    end=end_date,
-    auto_adjust=True
-)
-st.write(f"Showing historical data for {ticker} from {start_date} to {end_date}:")
-st.dataframe(df.head())
 
 # ----- MAIN CONTENT -----
 if tool_type == "VIX Calculator":
     st.header(f"VIX-Style Volatility for {ticker}")
-    window = st.number_input("Rolling window (days):", min_value=5, max_value=90, value=30, step=1)
     if st.button("Calculate VIX"):
         try:
-            vix_df = get_historical_vix(ticker, window=window, start=str(start_date), end=str(end_date))
             st.write(vix_df.head())
             st.line_chart(vix_df.set_index("Date")["VIX"])
         except Exception as e:
@@ -55,41 +35,27 @@ elif tool_type == "Buy and Hold":
     st.header("Buy and Hold Results")
     if st.button("Show Buy & Hold Performance"):
         try:
-            data = yf.download(ticker, start=str(start_date), end=str(end_date), auto_adjust=True)
             # --- Single ticker only: handle MultiIndex or single
             if isinstance(data.columns, pd.MultiIndex):
-                data = data['Close'].iloc[:, 0].to_frame('Close')
             if "Close" not in data.columns:
                 raise ValueError("Close price column not found!")
             data["Returns"] = data["Close"].pct_change()
             data["Cumulative"] = (1 + data["Returns"].fillna(0)).cumprod()
             st.line_chart(data["Cumulative"])
-            st.write(data.tail())
-            st.metric("Total Return (%)", f"{100*(data['Cumulative'].iloc[-1] - 1):.2f}")
         except Exception as e:
             st.error(f"Error: {e}")
 
 elif tool_type == "Mean Reversion":
     st.header("Mean Reversion Results")
-    window = st.number_input("Rolling Window (Days)", min_value=2, max_value=30, value=14, step=1)
-    entry_z = st.slider("Entry Z-Score", min_value=0.5, max_value=3.0, value=2.0, step=0.1)
-    exit_z = st.slider("Exit Z-Score", min_value=0.0, max_value=2.0, value=0.5, step=0.1)
     if st.button("Run Mean Reversion Strategy"):
         try:
-            data = yf.download(ticker, start=str(start_date), end=str(end_date), auto_adjust=True)
             # Handle if yf.download returns MultiIndex columns (should only happen if multiple tickers)
             if isinstance(data.columns, pd.MultiIndex):
-                if 'Close' in data.columns.levels[0] and ticker in data['Close']:
-                    data = data['Close'][ticker].to_frame('Close')
                 else:
                     # fallback: just take the first ticker's Close if something weird happens
-                    data = data['Close'].iloc[:, 0].to_frame('Close')
             if "Close" not in data.columns:
                 raise ValueError("Close price column not found!")
             data["zscore"] = (
-                (data["Close"] - data["Close"].rolling(window).mean()) /
-                data["Close"].rolling(window).std()
-            )
             data["Signal"] = 0
             data.loc[data["zscore"] > entry_z, "Signal"] = -1
             data.loc[data["zscore"] < -entry_z, "Signal"] = 1
@@ -98,21 +64,12 @@ elif tool_type == "Mean Reversion":
             data["Returns"] = data["Close"].pct_change() * data["Position"].shift(1)
             data["Cumulative"] = (1 + data["Returns"].fillna(0)).cumprod()
             st.line_chart(data["Cumulative"])
-            st.write(data[["Close", "zscore", "Signal", "Position", "Returns", "Cumulative"]].tail())
-            st.metric("Total Return (%)", f"{100*(data['Cumulative'].iloc[-1] - 1):.2f}")
         except Exception as e:
             st.error(f"Error: {e}")
 
-elif tool_type == "Moving Average Crossover":
-    st.header("Moving Average Crossover Results")
-    short_window = st.number_input("Short MA Window", min_value=2, max_value=100, value=20, step=1)
-    long_window = st.number_input("Long MA Window", min_value=10, max_value=200, value=50, step=1)
-    if st.button("Run Moving Average Crossover"):
         try:
-            data = yf.download(ticker, start=str(start_date), end=str(end_date), auto_adjust=True)
             # --- Handle MultiIndex or single
             if isinstance(data.columns, pd.MultiIndex):
-                data = data['Close'].iloc[:, 0].to_frame('Close')
             if "Close" not in data.columns:
                 raise ValueError("Close price column not found!")
             data["SMA_short"] = data["Close"].rolling(window=short_window).mean()
@@ -124,26 +81,18 @@ elif tool_type == "Moving Average Crossover":
             data["Returns"] = data["Close"].pct_change() * data["Position"].shift(1)
             data["Cumulative"] = (1 + data["Returns"].fillna(0)).cumprod()
             st.line_chart(data["Cumulative"])
-            st.write(data[["Close", "SMA_short", "SMA_long", "Signal", "Position", "Returns", "Cumulative"]].tail())
-            st.metric("Total Return (%)", f"{100*(data['Cumulative'].iloc[-1] - 1):.2f}")
         except Exception as e:
             st.error(f"Error: {e}")
 
 elif tool_type == "Pairs Trading":
     st.header("Pairs Trading Results")
     ticker2 = st.text_input("Second Ticker Symbol (e.g. MSFT)", "MSFT")
-    lookback = st.number_input("Z-Score Lookback Window", min_value=2, max_value=60, value=20, step=1)
-    entry_z = st.slider("Entry Z-Score", min_value=0.5, max_value=3.0, value=2.0, step=0.1)
-    exit_z = st.slider("Exit Z-Score", min_value=0.0, max_value=2.0, value=0.5, step=0.1)
     if st.button("Run Pairs Trading Strategy"):
         try:
             # Download both tickers together for perfect alignment
-            df = yf.download([ticker, ticker2], start=str(start_date), end=str(end_date), auto_adjust=True)
-            close_df = df['Close'].dropna()
             close1 = close_df[ticker]
             close2 = close_df[ticker2]
             spread = close1 - close2
-            zscore = (spread - spread.rolling(lookback).mean()) / spread.rolling(lookback).std()
             position = pd.Series(0, index=spread.index)
             position[zscore > entry_z] = -1  # Short spread
             position[zscore < -entry_z] = 1  # Long spread
@@ -152,8 +101,6 @@ elif tool_type == "Pairs Trading":
             returns = (close1.pct_change() - close2.pct_change()) * position.shift(1)
             cumulative = (1 + returns.fillna(0)).cumprod()
             st.line_chart(cumulative)
-            st.write(pd.DataFrame({"Spread": spread, "Z-Score": zscore, "Position": position}).tail())
-            st.metric("Total Return (%)", f"{100*(cumulative.iloc[-1] - 1):.2f}")
         except Exception as e:
             st.error(f"Error: {e}")
 

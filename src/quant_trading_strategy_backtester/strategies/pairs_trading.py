@@ -7,6 +7,7 @@ assets will continue.
 from typing import Any
 
 import polars as pl
+
 from quant_trading_strategy_backtester.strategies.base import BaseStrategy
 
 

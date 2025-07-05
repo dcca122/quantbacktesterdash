@@ -1,10 +1,12 @@
 """
 Tests for the Pairs Trading strategy class.
 """
+
 from datetime import date, timedelta
 
 import polars as pl
 import pytest
+
 from quant_trading_strategy_backtester.strategies.pairs_trading import (
     PairsTradingStrategy,
 )

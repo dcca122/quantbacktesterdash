@@ -7,6 +7,7 @@ import datetime
 from typing import Any, cast
 
 import streamlit as st
+
 from quant_trading_strategy_backtester.strategies.base import TRADING_STRATEGIES
 from quant_trading_strategy_backtester.utils import (
     NUM_TOP_COMPANIES_ONE_TICKER,
@@ -50,7 +51,7 @@ def get_user_inputs_except_strategy_params() -> (
     elif strategy_type in [
         "Buy and Hold",
         "Mean Reversion",
-        "Moving Average Crossover",
+        "Triple EMA Crossover (TEMO)",
     ]:
         auto_select_tickers = st.sidebar.checkbox(
             f"Optimise Ticker From Top {NUM_TOP_COMPANIES_ONE_TICKER} S&P 500 Companies"
@@ -88,11 +89,8 @@ def get_optimisation_ranges(strategy_type: str) -> dict[str, Any]:
         raise ValueError("Invalid strategy type")
 
     match strategy_type:
-        case "Moving Average Crossover":
-            return {
-                "short_window": range(5, 51, 5),
-                "long_window": range(20, 201, 20),
-            }
+        case "Triple EMA Crossover (TEMO)":
+            return {"position_size": [0.01, 0.02, 0.03, 0.05]}
         case "Mean Reversion":
             return {
                 "window": range(5, 101, 5),
@@ -124,14 +122,15 @@ def get_fixed_params(strategy_type: str) -> dict[str, Any]:
         raise ValueError("Invalid strategy type")
 
     match strategy_type:
-        case "Moving Average Crossover":
-            short_window = st.sidebar.slider(
-                "Short Window (Days)", min_value=5, max_value=50, value=20
+        case "Triple EMA Crossover (TEMO)":
+            position_size = st.sidebar.slider(
+                "Position Size (% of capital)",
+                min_value=0.01,
+                max_value=0.1,
+                value=0.03,
+                step=0.01,
             )
-            long_window = st.sidebar.slider(
-                "Long Window (Days)", min_value=20, max_value=200, value=50
-            )
-            return {"short_window": short_window, "long_window": long_window}
+            return {"position_size": position_size}
         case "Mean Reversion":
             window = st.sidebar.slider(
                 "Window (Days)", min_value=5, max_value=100, value=20
