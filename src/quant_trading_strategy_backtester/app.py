@@ -1,11 +1,8 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-"""
-Streamlit application for running and visualising trading strategy backtests.
-"""
-
 from __future__ import annotations
+
+"""Streamlit application for running and visualising trading strategy backtests."""
+
+# ruff: noqa: E402
 
 import os
 import sys
@@ -13,6 +10,8 @@ from typing import cast
 
 import streamlit as st
 import streamlit.web.cli as stcli
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from quant_trading_strategy_backtester.backtest_runner import run_backtest
 from quant_trading_strategy_backtester.data import get_full_company_name
