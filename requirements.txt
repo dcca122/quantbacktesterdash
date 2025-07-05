@@ -73,3 +73,4 @@ watchdog==4.0.2 ; platform_system != 'Darwin'
 webencodings==0.5.1
 websockets==15.0.1
 yfinance==0.2.61
+scipy
