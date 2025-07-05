@@ -1,12 +1,8 @@
 import streamlit as st
 import yfinance as yf
+import numpy as np
+import pandas as pd
 from quant_desk_tools.black_scholes import black_scholes_price
-
-def assign_single_column(df, column_name, data):
-    # If it's a DataFrame, pick the first column
-    if isinstance(data, pd.DataFrame):
-        data = data.iloc[:, 0]
-    df[column_name] = data
 
 # ----- SIDEBAR -----
 st.sidebar.title("Strategy & Analysis Dashboard")
@@ -17,15 +13,23 @@ tool_type = st.sidebar.selectbox(
         "Mean Reversion",
         "Pairs Trading",
         "VIX Calculator",
+        "Black-Scholes Option Pricing",
+    ]
 )
-
 ticker = st.sidebar.text_input("Ticker Symbol:", "AAPL")
+
+# Placeholder data (replace with your own logic as needed)
+data = yf.download(ticker, progress=False)
 
 # ----- MAIN CONTENT -----
 if tool_type == "VIX Calculator":
     st.header(f"VIX-Style Volatility for {ticker}")
     if st.button("Calculate VIX"):
         try:
+            data['Return'] = np.log(data['Close'] / data['Close'].shift(1))
+            data['RealizedVol'] = data['Return'].rolling(window=30).std() * np.sqrt(252)
+            data['VIX'] = data['RealizedVol'] * 100
+            vix_df = data[['VIX']].dropna().reset_index()
             st.write(vix_df.head())
             st.line_chart(vix_df.set_index("Date")["VIX"])
         except Exception as e:
@@ -35,10 +39,6 @@ elif tool_type == "Buy and Hold":
     st.header("Buy and Hold Results")
     if st.button("Show Buy & Hold Performance"):
         try:
-            # --- Single ticker only: handle MultiIndex or single
-            if isinstance(data.columns, pd.MultiIndex):
-            if "Close" not in data.columns:
-                raise ValueError("Close price column not found!")
             data["Returns"] = data["Close"].pct_change()
             data["Cumulative"] = (1 + data["Returns"].fillna(0)).cumprod()
             st.line_chart(data["Cumulative"])
@@ -47,36 +47,19 @@ elif tool_type == "Buy and Hold":
 
 elif tool_type == "Mean Reversion":
     st.header("Mean Reversion Results")
+    short_window = 10
+    long_window = 30
+    entry_z = 1.0
+    exit_z = 0.5
     if st.button("Run Mean Reversion Strategy"):
         try:
-            # Handle if yf.download returns MultiIndex columns (should only happen if multiple tickers)
-            if isinstance(data.columns, pd.MultiIndex):
-                else:
-                    # fallback: just take the first ticker's Close if something weird happens
-            if "Close" not in data.columns:
-                raise ValueError("Close price column not found!")
-            data["zscore"] = (
+            data["SMA_short"] = data["Close"].rolling(window=short_window).mean()
+            data["SMA_long"] = data["Close"].rolling(window=long_window).mean()
+            data["zscore"] = (data["Close"] - data["SMA_long"]) / data["Close"].rolling(window=long_window).std()
             data["Signal"] = 0
             data.loc[data["zscore"] > entry_z, "Signal"] = -1
             data.loc[data["zscore"] < -entry_z, "Signal"] = 1
-            data.loc[abs(data["zscore"]) < exit_z, "Signal"] = 0
-            data["Position"] = data["Signal"].replace(to_replace=0, method="ffill")
-            data["Returns"] = data["Close"].pct_change() * data["Position"].shift(1)
-            data["Cumulative"] = (1 + data["Returns"].fillna(0)).cumprod()
-            st.line_chart(data["Cumulative"])
-        except Exception as e:
-            st.error(f"Error: {e}")
-
-        try:
-            # --- Handle MultiIndex or single
-            if isinstance(data.columns, pd.MultiIndex):
-            if "Close" not in data.columns:
-                raise ValueError("Close price column not found!")
-            data["SMA_short"] = data["Close"].rolling(window=short_window).mean()
-            data["SMA_long"] = data["Close"].rolling(window=long_window).mean()
-            data["Signal"] = 0
-            data.loc[data["SMA_short"] > data["SMA_long"], "Signal"] = 1
-            data.loc[data["SMA_short"] < data["SMA_long"], "Signal"] = -1
+            data.loc[data["zscore"].abs() < exit_z, "Signal"] = 0
             data["Position"] = data["Signal"].replace(to_replace=0, method="ffill")
             data["Returns"] = data["Close"].pct_change() * data["Position"].shift(1)
             data["Cumulative"] = (1 + data["Returns"].fillna(0)).cumprod()
@@ -89,22 +72,23 @@ elif tool_type == "Pairs Trading":
     ticker2 = st.text_input("Second Ticker Symbol (e.g. MSFT)", "MSFT")
     if st.button("Run Pairs Trading Strategy"):
         try:
-            # Download both tickers together for perfect alignment
-            close1 = close_df[ticker]
-            close2 = close_df[ticker2]
-            spread = close1 - close2
+            df = yf.download([ticker, ticker2], progress=False)["Close"]
+            spread = df[ticker] - df[ticker2]
+            zscore = (spread - spread.rolling(30).mean()) / spread.rolling(30).std()
+            entry_z = 1.0
+            exit_z = 0.5
             position = pd.Series(0, index=spread.index)
             position[zscore > entry_z] = -1  # Short spread
             position[zscore < -entry_z] = 1  # Long spread
             position[abs(zscore) < exit_z] = 0  # Exit
             position = position.replace(to_replace=0, method="ffill")
-            returns = (close1.pct_change() - close2.pct_change()) * position.shift(1)
+            returns = (df[ticker].pct_change() - df[ticker2].pct_change()) * position.shift(1)
             cumulative = (1 + returns.fillna(0)).cumprod()
             st.line_chart(cumulative)
         except Exception as e:
             st.error(f"Error: {e}")
 
-if tool_type == "Black-Scholes Option Pricing":
+elif tool_type == "Black-Scholes Option Pricing":
     st.header("Black-Scholes Option Pricing")
     spot = st.number_input("Spot Price (S)", value=100.0)
     strike = st.number_input("Strike Price (K)", value=100.0)
